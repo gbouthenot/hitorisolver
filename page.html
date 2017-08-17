@@ -52,6 +52,12 @@ buttons.forEach(button => button.addEventListener('click', (e) => {
   if (action === 'back') { hito.back(); hito.render(); }
 }));
 
+const hypos = document.querySelector('.hypos');
+hypos.addEventListener('click', (e) => {
+  const index = e.target.getAttribute('data-index');
+  console.log(index);
+});
+
 
 hito.pass1();
 hito.pass2();

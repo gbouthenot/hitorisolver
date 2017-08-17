@@ -51,9 +51,10 @@ class Hitori {
 
     const hyphtml = document.querySelector('.hypos');
     hyphtml.innerHTML = '';
+    let index = 0;
     this.hypos.forEach((hypo) => {
       const tpl = hypo.join(', ');
-      hyphtml.innerHTML += tpl + '\n';
+      hyphtml.innerHTML += `<div data-index='${index++}'>${tpl}</div>`;
     });
   }
 
