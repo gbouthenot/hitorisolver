@@ -76,6 +76,12 @@ class Hitori {
         }
       }
     }
+    if (!this.testfill(this.sta)) {
+      return 'ERR';
+    }
+    if (this.testfinished()) {
+      return 'END';
+    }
     return res;
   }
 
@@ -107,6 +113,12 @@ class Hitori {
           }
         }
       }
+    }
+    if (!this.testfill(this.sta)) {
+      return 'ERR';
+    }
+    if (this.testfinished()) {
+      return 'END';
     }
     return res;
   }
@@ -143,6 +155,12 @@ class Hitori {
         }
       }
     }
+    if (!this.testfill(this.sta)) {
+      return 'ERR';
+    }
+    if (this.testfinished()) {
+      return 'END';
+    }
     return res;
   }
 
@@ -175,8 +193,9 @@ class Hitori {
    * si toutes les cases open ont été peintes, return true
    * sinon return false
    */
-  testfill(copy) {
+  testfill(sta) {
     const self = this;
+    const copy = JSON.parse(JSON.stringify(sta));
 
     // https://en.wikipedia.org/wiki/Flood_fill
     function ff(x, y) {
@@ -210,6 +229,19 @@ class Hitori {
     return res;
   }
 
+  /**
+   * return true if finished
+   */
+  testfinished() {
+    const flattened = this.sta.reduce((a, b) => a.concat(b), []);
+    let res = true;
+    flattened.forEach((a) => {
+      if (a === null) { res = false; }
+    });
+    return res;
+  }
+
+  // flood fill test chaque case
   pass4() {
     for (let y = 0; y < this.sizY; y++) {
       for (let x = 0; x < this.sizX; x++) {
@@ -226,6 +258,49 @@ class Hitori {
       }
     }
     return false;
+  }
+
+  // trouve deux cases vides adjacentes
+  pass5() {
+    const hypos = [];
+    for (let y = 0; y < this.sizY; y++) {
+      for (let x = 0; x < this.sizX; x++) {
+        if (this.sta[y][x] !== null) { continue; }
+        const def = this.def[y][x];
+        if (x + 1 < this.sizX && this.sta[y][x + 1] === null && this.def[y][x + 1] === def) {
+          hypos.push([x, y, true]);
+          hypos.push([x, y, false]);
+        }
+        if (y + 1 < this.sizY && this.sta[y + 1][x] === null && this.def[y + 1][x] === def) {
+          hypos.push([x, y, true]);
+          hypos.push([x, y, false]);
+        }
+      }
+    }
+    return hypos;
+  }
+
+  tryhypo(x, y, val) {
+    const savdef = JSON.parse(JSON.stringify(this.def));
+    const savsta = JSON.parse(JSON.stringify(this.sta));
+    this.sta[y][x] = val;
+
+    let res = true;
+    let r;
+    while (res === true) {
+      res = false;
+      r = this.pass2();
+      if (r !== false) { res = r; }
+      if (r === 'END' || r === 'ERR') { break; }
+      r = this.pass3();
+      if (r !== false) { res = r; }
+      if (r === 'END' || r === 'ERR') { break; }
+      r = this.pass4();
+      if (r !== false) { res = r; }
+      if (r === 'END' || r === 'ERR') { break; }
+    }
+    if (res === 'END') { console.log('Finished'); }
+    if (res === 'ERR') { console.log('Invalid'); }
   }
 
 }
