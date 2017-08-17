@@ -8,6 +8,8 @@ class Hitori {
     this.sizY = 0;
     this.def = [];
     this.sta = [];
+    this.savsta = [];
+    this.hypos = [];
 
     const cases = source.split(' ').map(col => parseInt(col, 10));
     while (cases.length) {
@@ -46,6 +48,13 @@ class Hitori {
         }
       }
     }
+
+    const hyphtml = document.querySelector('.hypos');
+    hyphtml.innerHTML = '';
+    this.hypos.forEach((hypo) => {
+      const tpl = hypo.join(', ');
+      hyphtml.innerHTML += tpl + '\n';
+    });
   }
 
   // mark n ? n  -> n=open
@@ -212,10 +221,14 @@ class Hitori {
     row: for (y = 0; y < this.sizY; y++) {
       for (x = 0; x < this.sizX; x++) {
         if (copy[y][x] === true) {
-          // on a trouvé une case open
+          // open case found
           break row;
         }
       }
+    }
+    if (y === this.sizY) {
+      // no open case
+      return true;
     }
 
     ff(x, y);
@@ -262,27 +275,32 @@ class Hitori {
 
   // trouve deux cases vides adjacentes
   pass5() {
-    const hypos = [];
+    let res = false;
     for (let y = 0; y < this.sizY; y++) {
       for (let x = 0; x < this.sizX; x++) {
         if (this.sta[y][x] !== null) { continue; }
         const def = this.def[y][x];
         if (x + 1 < this.sizX && this.sta[y][x + 1] === null && this.def[y][x + 1] === def) {
-          hypos.push([x, y, true]);
-          hypos.push([x, y, false]);
+          this.hypos.push([x, y, true]);
+          this.hypos.push([x, y, false]);
+          res = true;
         }
         if (y + 1 < this.sizY && this.sta[y + 1][x] === null && this.def[y + 1][x] === def) {
-          hypos.push([x, y, true]);
-          hypos.push([x, y, false]);
+          this.hypos.push([x, y, true]);
+          this.hypos.push([x, y, false]);
+          res = true;
         }
       }
     }
-    return hypos;
+    return true;
+  }
+
+  clear() {
+    this.hypos = [];
   }
 
   tryhypo(x, y, val) {
-    const savdef = JSON.parse(JSON.stringify(this.def));
-    const savsta = JSON.parse(JSON.stringify(this.sta));
+    this.savsta.push(JSON.parse(JSON.stringify(this.sta)));
     this.sta[y][x] = val;
 
     let res = true;
@@ -301,6 +319,14 @@ class Hitori {
     }
     if (res === 'END') { console.log('Finished'); }
     if (res === 'ERR') { console.log('Invalid'); }
+  }
+
+  back() {
+    if (this.savsta.length) {
+      this.sta = this.savsta.pop();
+    } else {
+      console.log('cannot go back further');
+    }
   }
 
 }
