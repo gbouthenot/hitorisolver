@@ -60,15 +60,16 @@ class Hitori {
   }
 
   // mark n ? n  -> n=open
-  pass1() {
+  init_pass1() {
     let res = false;
     for (let y = 0; y < this.sizY; y++) {
       for (let x = 1; x < this.sizX - 1; x++) {
-        if (this.sta[y][x] !== null) { continue; }
         const h0 = this.def[y][x - 1];
         const h2 = this.def[y][x + 1];
         if (h0 === h2) {
-          console.log(`3H consécutifs: (${x}, ${y}) -> open`);
+          if (this.sta[y][x] === true) { continue; }
+          if (this.sta[y][x] === false) { return 'ERR'; }
+          console.log(`3H center: (${x}, ${y}) -> open`);
           this.sta[y][x] = true;
           res = true;
         }
@@ -77,16 +78,76 @@ class Hitori {
 
     for (let y = 1; y < this.sizY - 1; y++) {
       for (let x = 0; x < this.sizX; x++) {
-        if (this.sta[y][x] !== null) { continue; }
         const v0 = this.def[y - 1][x];
         const v2 = this.def[y + 1][x];
         if (v0 === v2) {
-          console.log(`3V consécutifs: (${x}, ${y}) -> open`);
+          if (this.sta[y][x] === true) { continue; }
+          if (this.sta[y][x] === false) { return 'ERR'; }
+          console.log(`3V center: (${x}, ${y}) -> open`);
           this.sta[y][x] = true;
           res = true;
         }
       }
     }
+    if (!this.testfill(this.sta)) {
+      return 'ERR';
+    }
+    if (this.testfinished()) {
+      return 'END';
+    }
+    return res;
+  }
+
+  // mark nn -> other N is close
+  init_pass2() {
+    let res = false;
+    // horiz check
+
+    for (let y = 0; y < this.sizY; y++) {
+      for (let x = 0; x < this.sizX; x++) {
+        const def = this.def[y][x];
+        if (x + 1 < this.sizX && this.def[y][x + 1] === def) {
+          if (x + 2 < this.sizX && this.def[y][x + 2] === def) {
+            // ignore 3 same
+            x += 3;
+            continue;
+          }
+          for (let x2 = 0; x2 < this.sizX; x2++) {
+            // ignore those 2
+            if (x2 === x || x2 === x + 1) { continue; }
+            if (this.def[y][x2] !== def || this.sta[y][x2] === false) { continue; }
+            if (this.sta[y][x2] === true) { return 'ERR'; }
+            console.log(`2H consécutifs: (${x2}, ${y}) -> close`);
+            this.sta[y][x2] = false;
+            res = true;
+          }
+        }
+      }
+    }
+
+    // vertical check
+    for (let x = 0; x < this.sizX; x++) {
+      for (let y = 0; y < this.sizY; y++) {
+        const def = this.def[y][x];
+        if (y + 1 < this.sizY && this.def[y + 1][x] === def) {
+          if (y + 2 < this.sizY && this.def[y + 2][x] === def) {
+            // ignore 3 same
+            y += 3;
+            continue;
+          }
+          for (let y2 = 0; y2 < this.sizY; y2++) {
+            // ignore those 2
+            if (y2 === y || y2 === y + 1) { continue; }
+            if (this.def[y2][x] !== def || this.sta[y2][x] === false) { continue; }
+            if (this.sta[y2][x] === true) { return 'ERR'; }
+            console.log(`2V consécutifs: (${x}, ${y2}) -> close`);
+            this.sta[y2][x] = false;
+            res = true;
+          }
+        }
+      }
+    }
+
     if (!this.testfill(this.sta)) {
       return 'ERR';
     }
@@ -258,7 +319,8 @@ class Hitori {
 
   // flood fill test chaque case
   pass4() {
-    for (let y = 0; y < this.sizY; y++) {
+    let res = false;
+    row: for (let y = 0; y < this.sizY; y++) {
       for (let x = 0; x < this.sizX; x++) {
         if (this.sta[y][x] === null) {
           // une case est vide, on essaie de la noircir
@@ -267,12 +329,16 @@ class Hitori {
           if (this.testfill(sta2) === false) {
             console.log(`(${x}, ${y}) ne peut être close (séparation) (${x}, ${y}) -> open`);
             this.sta[y][x] = true;
-            return true;
+            res = true;
+            break row;
           }
         }
       }
     }
-    return false;
+    if (this.testfinished()) {
+      return 'END';
+    }
+    return res;
   }
 
   // trouve deux cases vides adjacentes
@@ -328,11 +394,18 @@ class Hitori {
   auto() {
     let res = true;
     let r;
+    let init = false;
     while (res === true) {
       res = false;
-      r = this.pass1();
-      if (r !== false) { res = r; }
-      if (r === 'END' || r === 'ERR') { break; }
+      if (!init) {
+        r = this.init_pass1();
+        if (r !== false) { res = r; }
+        if (r === 'END' || r === 'ERR') { break; }
+        r = this.init_pass2();
+        if (r !== false) { res = r; }
+        if (r === 'END' || r === 'ERR') { break; }
+        init = true;
+      }
       r = this.pass2();
       if (r !== false) { res = r; }
       if (r === 'END' || r === 'ERR') { break; }
