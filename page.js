@@ -10,6 +10,7 @@ class Hitori {
     this.sta = [];
     this.savsta = [];
     this.hypos = [];
+    this.savhypos = [];
 
     const cases = source.split(' ').map(col => parseInt(col, 10));
     while (cases.length) {
@@ -300,14 +301,38 @@ class Hitori {
     this.hypos = [];
   }
 
-  tryhypo(x, y, val) {
-    this.savsta.push(JSON.parse(JSON.stringify(this.sta)));
-    this.sta[y][x] = val;
+  tryhypo(index) {
+    // const hypo = this.hypos.splice(index, 1)[0];
+    const hypo = this.hypos[index];
+    this.try(...hypo);
+  }
 
+  try(x, y, val) {
+    this.savsta.push(JSON.parse(JSON.stringify(this.sta)));
+    this.savhypos.push(this.hypos);
+    this.hypos = JSON.parse(JSON.stringify(this.hypos));
+    this.sta[y][x] = val;
+    this.hypos = [];
+  }
+
+  tryall() {
+    this.hypos.forEach((hypo) => {
+      if (hypo[3] !== undefined) { return; }
+      this.try(...hypo);
+      const res = this.auto();
+      this.back();
+      hypo.push(res);
+    });
+  }
+
+  auto() {
     let res = true;
     let r;
     while (res === true) {
       res = false;
+      r = this.pass1();
+      if (r !== false) { res = r; }
+      if (r === 'END' || r === 'ERR') { break; }
       r = this.pass2();
       if (r !== false) { res = r; }
       if (r === 'END' || r === 'ERR') { break; }
@@ -318,13 +343,13 @@ class Hitori {
       if (r !== false) { res = r; }
       if (r === 'END' || r === 'ERR') { break; }
     }
-    if (res === 'END') { console.log('Finished'); }
-    if (res === 'ERR') { console.log('Invalid'); }
+    return res;
   }
 
   back() {
     if (this.savsta.length) {
       this.sta = this.savsta.pop();
+      this.hypos = this.savhypos.pop();
     } else {
       console.log('cannot go back further');
     }

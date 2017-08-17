@@ -14,6 +14,7 @@ table.hit td.open { background-size:contain; background-image:url(data:image/png
 .actions ul { margin:0; padding:0; list-style:none; }
 
 .hypos { white-space:pre; }
+.hypos div:hover { background:#ff0; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -22,12 +23,14 @@ table.hit td.open { background-size:contain; background-image:url(data:image/png
   <table class="hit"></table>
   <div class="actions">
     <ul>
+      <li><button type="button" data-action="auto">auto</button></li>
       <li><button type="button" data-action="pass1">open n ? n</button></li>
       <li><button type="button" data-action="pass2">close opened numbers</button></li>
       <li><button type="button" data-action="pass3">open closed adjacents</button></li>
       <li><button type="button" data-action="pass4">open path</button></li>
       <li><button type="button" data-action="clear">clear hypos</button></li>
       <li><button type="button" data-action="pass5">find hypos</button></li>
+      <li><button type="button" data-action="tryall">try all</button></li>
       <li><button type="button" data-action="back">back</button></li>
     </ul>
     <div class="hypos"></div>
@@ -35,7 +38,7 @@ table.hit td.open { background-size:contain; background-image:url(data:image/png
 </div><!-- .hitmain -->
 
 <script>
-/* eslint-disable no-unused-vars, no-undef */
+/* eslint-disable no-unused-vars, no-undef, no-console */
 const source = '2 8 3 3 5 4 8 2 2 1 6 3 4 5 8 7 8 7 1 3 2 3 4 3 2 2 2 8 3 7 1 1 5 7 2 6 6 3 1 4 3 5 4 7 7 2 1 8 3 4 8 6 7 3 2 6 4 1 7 2 8 8 6 3';
 const sizX = 8;
 const hito = new Hitori(source, sizX);
@@ -43,29 +46,32 @@ const hito = new Hitori(source, sizX);
 const buttons = document.querySelectorAll('.actions button[data-action]');
 buttons.forEach(button => button.addEventListener('click', (e) => {
   const action = e.target.getAttribute('data-action');
-  if (action === 'pass1') { hito.pass1(); hito.render(); }
-  if (action === 'pass2') { hito.pass2(); hito.render(); }
-  if (action === 'pass3') { hito.pass3(); hito.render(); }
-  if (action === 'pass4') { hito.pass4(); hito.render(); }
-  if (action === 'pass5') { hito.pass5(); hito.render(); }
+  if (action === 'auto') { console.log(hito.auto()); hito.render(); }
+  if (action === 'pass1') { console.log(hito.pass1()); hito.render(); }
+  if (action === 'pass2') { console.log(hito.pass2()); hito.render(); }
+  if (action === 'pass3') { console.log(hito.pass3()); hito.render(); }
+  if (action === 'pass4') { console.log(hito.pass4()); hito.render(); }
   if (action === 'clear') { hito.clear(); hito.render(); }
+  if (action === 'pass5') { console.log(hito.pass5()); hito.render(); }
+  if (action === 'tryall') { hito.tryall(); hito.render(); }
   if (action === 'back') { hito.back(); hito.render(); }
 }));
 
 const hypos = document.querySelector('.hypos');
 hypos.addEventListener('click', (e) => {
   const index = e.target.getAttribute('data-index');
-  console.log(index);
+  hito.tryhypo(index);
+  hito.render();
 });
 
-
+/*
 hito.pass1();
 hito.pass2();
 hito.pass3();
 hito.pass2();
 hito.pass4();
 hito.pass5();
-
+*/
 hito.render();
 
 </script>
