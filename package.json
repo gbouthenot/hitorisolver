@@ -1,0 +1,19 @@
+{
+  "name": "hitori",
+  "version": "0.0.0",
+  "description": "Solveur de Hitori",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hitori"
+  ],
+  "author": "Gilles Bouthenot",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.1.3",
+    "eslint-plugin-import": "^2.2.0"
+  }
+}
