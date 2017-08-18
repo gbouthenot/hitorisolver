@@ -319,6 +319,9 @@ class Hitori {
 
   // flood fill test chaque case
   pass4() {
+    if (!this.testfill(this.sta)) {
+      return 'ERR';
+    }
     let res = false;
     row: for (let y = 0; y < this.sizY; y++) {
       for (let x = 0; x < this.sizX; x++) {
