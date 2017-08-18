@@ -3,8 +3,8 @@
    no-continue, no-labels, no-restricted-syntax */
 
 class Hitori {
-  constructor(source, sizX) {
-    this.sizX = sizX;
+  constructor(source) {
+    this.sizX = 0;
     this.sizY = 0;
     this.def = [];
     this.sta = [];
@@ -13,9 +13,20 @@ class Hitori {
     this.savhypos = [];
 
     const cases = source.split(' ').map(col => parseInt(col, 10));
+
+    for (let i = 4; i < 50; i++) {
+      if (i * i === cases.length) {
+        this.sizX = i;
+        break;
+      }
+    }
+    if (!this.sizX) {
+      throw Error('Cannot guess size');
+    }
+
     while (cases.length) {
-      this.def.push(cases.splice(0, sizX));
-      this.sta.push(Array.from(Array(sizX), _ => null));
+      this.def.push(cases.splice(0, this.sizX));
+      this.sta.push(Array.from(Array(this.sizX), _ => null));
       this.sizY++;
     }
   }
