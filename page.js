@@ -60,7 +60,7 @@ class Hitori {
   }
 
   // mark n ? n  -> n=open
-  init_pass1() {
+  initPass1() {
     let res = false;
     for (let y = 0; y < this.sizY; y++) {
       for (let x = 1; x < this.sizX - 1; x++) {
@@ -99,7 +99,7 @@ class Hitori {
   }
 
   // mark nn -> other N is close
-  init_pass2() {
+  initPass2() {
     let res = false;
     // horiz check
 
@@ -398,10 +398,10 @@ class Hitori {
     while (res === true) {
       res = false;
       if (!init) {
-        r = this.init_pass1();
+        r = this.initPass1();
         if (r !== false) { res = r; }
         if (r === 'END' || r === 'ERR') { break; }
-        r = this.init_pass2();
+        r = this.initPass2();
         if (r !== false) { res = r; }
         if (r === 'END' || r === 'ERR') { break; }
         init = true;

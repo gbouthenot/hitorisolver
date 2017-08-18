@@ -24,8 +24,8 @@ table.hit td.open { background-size:contain; background-image:url(data:image/png
   <div class="actions">
     <ul>
       <li><button type="button" data-action="auto">auto</button></li>
-      <li><button type="button" data-action="init_pass1">init1: open n ? n</button></li>
-      <li><button type="button" data-action="init_pass2">init2: open 2 consécutifs</button></li>
+      <li><button type="button" data-action="initPass1">init1: open n ? n</button></li>
+      <li><button type="button" data-action="initPass2">init2: open 2 consécutifs</button></li>
       <li><button type="button" data-action="pass2">close opened numbers</button></li>
       <li><button type="button" data-action="pass3">open closed adjacents</button></li>
       <li><button type="button" data-action="pass4">open path</button></li>
@@ -80,8 +80,8 @@ const buttons = document.querySelectorAll('.actions button[data-action]');
 buttons.forEach(button => button.addEventListener('click', (e) => {
   const action = e.target.getAttribute('data-action');
   if (action === 'auto') { console.log(hito.auto()); hito.render(); }
-  if (action === 'init_pass1') { console.log(hito.init_pass1()); hito.render(); }
-  if (action === 'init_pass2') { console.log(hito.init_pass2()); hito.render(); }
+  if (action === 'initPass1') { console.log(hito.initPass1()); hito.render(); }
+  if (action === 'initPass2') { console.log(hito.initPass2()); hito.render(); }
   if (action === 'pass2') { console.log(hito.pass2()); hito.render(); }
   if (action === 'pass3') { console.log(hito.pass3()); hito.render(); }
   if (action === 'pass4') { console.log(hito.pass4()); hito.render(); }
