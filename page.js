@@ -374,11 +374,8 @@ class Hitori {
   }
 
   try(x, y, val) {
-    this.savsta.push(JSON.parse(JSON.stringify(this.sta)));
-    this.savhypos.push(this.hypos);
-    this.hypos = JSON.parse(JSON.stringify(this.hypos));
+    this.save();
     this.sta[y][x] = val;
-    this.hypos = [];
   }
 
   tryall() {
@@ -417,6 +414,13 @@ class Hitori {
       if (r === 'END' || r === 'ERR') { break; }
     }
     return res;
+  }
+
+  save() {
+    this.savsta.push(this.sta);
+    this.savhypos.push(this.hypos);
+    this.sta = JSON.parse(JSON.stringify(this.sta));
+    this.hypos = [];
   }
 
   back() {
