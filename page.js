@@ -416,6 +416,7 @@ class Hitori {
 
   auto() {
     let res = true;
+    let didSomething = false;
     let r;
     let init = false;
     while (res === true) {
@@ -438,8 +439,12 @@ class Hitori {
       r = this.pass4();
       if (r !== false) { res = r; }
       if (r === 'END' || r === 'ERR') { break; }
+      if (res === true) {
+        didSomething = true;
+      }
     }
-    return res;
+    if (r === 'END' || r === 'ERR') { return r; }
+    return didSomething;
   }
 
   save() {
