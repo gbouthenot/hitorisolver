@@ -2,6 +2,10 @@
    class-methods-use-this, no-unused-vars, prefer-template,
    no-continue, no-labels, no-restricted-syntax */
 
+/*
+"[[false,true,false,true,true,true,true,null,true,true,false,true,true,false,true,true,true,false],[true,true,true,true,true,false,true,true,true,false,true,true,false,true,false,true,false,true],[false,true,true,true,false,true,true,false,true,true,true,false,true,true,true,true,true,true],[true,false,true,false,true,false,true,true,false,true,true,true,false,true,false,true,false,true],[true,true,false,true,true,true,true,false,true,false,true,false,true,true,true,false,true,false],[false,true,true,true,false,true,true,true,true,true,null,true,false,true,false,true,true,true],[true,true,true,false,true,true,false,true,true,true,true,false,true,true,true,true,false,true],[true,false,true,true,true,true,true,false,true,false,true,true,true,false,true,false,true,true],[false,true,true,true,false,true,true,true,false,true,true,false,true,true,false,true,false,true],[true,false,true,false,true,true,false,true,true,false,true,true,true,false,true,true,true,false],[true,true,false,true,true,true,true,null,true,true,false,true,true,true,true,false,true,true],[true,false,true,true,true,false,true,null,true,false,true,false,true,true,false,true,true,true],[true,true,true,false,true,true,false,true,true,true,true,true,false,true,true,false,true,false],[true,false,true,true,false,true,true,false,true,true,false,true,true,false,true,true,false,true],[false,true,false,true,true,true,false,true,true,false,true,true,false,true,true,true,true,true],[true,true,true,true,false,true,true,false,true,true,true,false,true,true,false,true,false,true],[false,true,true,false,true,true,false,true,false,true,false,true,true,false,true,false,true,true],[true,true,true,true,false,true,true,true,true,false,true,true,false,true,true,true,true,false]]"
+*/
+
 class Hitori {
   constructor(source) {
     this.sizX = 0;
@@ -81,8 +85,8 @@ class Hitori {
           if (this.sta[y][x] === true) { continue; }
           if (this.sta[y][x] === false) { return 'ERR'; }
           console.log(`3H center: (${x}, ${y}) -> open`);
-          this.sta[y][x] = true;
-          res = true;
+          res = this.openAndCheck(x, y);
+          if (res === 'ERR') { return res; }
         }
       }
     }
@@ -95,8 +99,8 @@ class Hitori {
           if (this.sta[y][x] === true) { continue; }
           if (this.sta[y][x] === false) { return 'ERR'; }
           console.log(`3V center: (${x}, ${y}) -> open`);
-          this.sta[y][x] = true;
-          res = true;
+          res = this.openAndCheck(x, y);
+          if (res === 'ERR') { return res; }
         }
       }
     }
@@ -218,24 +222,21 @@ class Hitori {
         const v2 = y + 1;
         if (h0 >= 0 && this.sta[y][h0] === null) {
           console.log(`(${x}, ${y})=close -> left is open`);
-          this.sta[y][h0] = true;
-          res = true;
+          res = this.openAndCheck(h0, y);
         }
         if (h2 < this.sizX && this.sta[y][h2] === null) {
           console.log(`(${x}, ${y})=close -> right is open`);
-          this.sta[y][h2] = true;
-          res = true;
+          res = this.openAndCheck(h2, y);
         }
         if (v0 >= 0 && this.sta[v0][x] === null) {
           console.log(`(${x}, ${y})=close -> up is open`);
-          this.sta[v0][x] = true;
-          res = true;
+          res = this.openAndCheck(x, v0);
         }
         if (v2 < this.sizY && this.sta[v2][x] === null) {
           console.log(`(${x}, ${y})=close -> down is open`);
-          this.sta[v2][x] = true;
-          res = true;
+          res = this.openAndCheck(x, v2);
         }
+        if (res === 'ERR') { return res; }
       }
     }
     if (!this.testfill(this.sta)) {
@@ -245,29 +246,6 @@ class Hitori {
       return 'END';
     }
     return res;
-  }
-
-  test1(x, y) {
-    const copy = JSON.parse(JSON.stringify(this.sta));
-    const self = this;
-    // https://en.wikipedia.org/wiki/Flood_fill
-    function ff(x1, y1) {
-      if (copy[y1][x1] === false || copy[y1][x1] === 1) { return; }
-      copy[y1][x1] = 1;
-      if (y1 + 1 < self.sizY) { ff(x1, y1 + 1); }
-      if (y1 - 1 >= 0) { ff(x1, y1 - 1); }
-      if (x1 + 1 < self.sizX) { ff(x1 + 1, y1); }
-      if (x1 - 1 >= 0) { ff(x1 - 1, y1); }
-    }
-    ff(x, y);
-
-    const flattened = copy.reduce((a, b) => a.concat(b), []);
-    let res = true;
-    flattened.forEach((a) => {
-      if (a !== false && a !== 1) { res = false; }
-    });
-
-    console.log(res, copy);
   }
 
   /**
@@ -342,8 +320,7 @@ class Hitori {
           sta2[y][x] = false;
           if (this.testfill(sta2) === false) {
             console.log(`(${x}, ${y}) ne peut être close (séparation) (${x}, ${y}) -> open`);
-            this.sta[y][x] = true;
-            res = true;
+            res = this.openAndCheck(x, y);
             break row;
           }
         }
@@ -355,7 +332,30 @@ class Hitori {
     return res;
   }
 
-  // trouve deux cases vides adjacentes
+  openAndCheck(x, y) {
+    const def = this.def[y][x];
+    for (let x2 = 0; x2 < this.sizX; x2++) {
+      if (x2 !== x && this.def[y][x2] === def && this.sta[y][x2] === true) {
+        return 'ERR';
+      }
+    }
+    for (let y2 = 0; y2 < this.sizY; y2++) {
+      if (y2 !== y && this.def[y2][x] === def && this.sta[y2][x] === true) {
+        return 'ERR';
+      }
+    }
+    this.sta[y][x] = true;
+    return true;
+  }
+
+  pushHypo(x, y) {
+    // todo vérifier pas déjà ni cellule adjacente
+    this.hypos.push([x, y, true]);
+    this.hypos.push([x, y, false]);
+    return true;
+  }
+
+  // trouve deux cases identiques adjacentes, indeterminées
   pass5() {
     let res = false;
     for (let y = 0; y < this.sizY; y++) {
@@ -363,17 +363,29 @@ class Hitori {
         if (this.sta[y][x] !== null) { continue; }
         const def = this.def[y][x];
         if (x + 1 < this.sizX && this.sta[y][x + 1] === null && this.def[y][x + 1] === def) {
-          this.hypos.push([x, y, true]);
-          this.hypos.push([x, y, false]);
-          res = true;
-        }
-        if (y + 1 < this.sizY && this.sta[y + 1][x] === null && this.def[y + 1][x] === def) {
-          this.hypos.push([x, y, true]);
-          this.hypos.push([x, y, false]);
-          res = true;
+          if (this.pushHypo(x, y)) {
+            res = true;
+          }
+        } else if (y + 1 < this.sizY && this.sta[y + 1][x] === null && this.def[y + 1][x] === def) {
+          if (this.pushHypo(x, y)) {
+            res = true;
+          }
+        } else {
+          // compte le nombre de rond autour de la case
+          let n = 0;
+          if (x - 1 >= 0 && this.sta[y][x - 1] === true) { n++; }
+          if (y - 1 >= 0 && this.sta[y - 1][x] === true) { n++; }
+          if (x + 1 < this.sizX && this.sta[y][x + 1] === true) { n++; }
+          if (y + 1 < this.sizY && this.sta[y + 1][x] === true) { n++; }
+          if (n >= 2) {
+            if (this.pushHypo(x, y)) {
+              res = true;
+            }
+          }
         }
       }
     }
+    // todo ajouter case qui touche deux ronds
     return true;
   }
 
