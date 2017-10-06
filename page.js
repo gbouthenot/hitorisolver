@@ -356,8 +356,8 @@ class Hitori {
   // trouve deux cases identiques adjacentes, indeterminées
   pass5() {
     let res = false;
-    for (let y = 0; y < this.sizY; y++) {
-      for (let x = 0; x < this.sizX; x++) {
+    for (let x = 0; x < this.sizX; x++) {
+      for (let y = 0; y < this.sizY; y++) {
         if (this.sta[y][x] !== null) { continue; }
         const def = this.def[y][x];
         if (x + 1 < this.sizX && this.sta[y][x + 1] === null && this.def[y][x + 1] === def) {
