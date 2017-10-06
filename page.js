@@ -49,16 +49,19 @@ class Hitori {
 
   render() {
     const table = document.querySelector('table.hit');
-    let rows = this.def.map(row => row.map(col => `<td>${col}</td>`).join(''));
+    let rows = this.def.map(row => row.map(col => `<td><span>${col}</span></td>`).join(''));
     rows = rows.map(row => `<tr>${row}</tr>`).join('');
     table.innerHTML = rows;
     for (let y = 1; y <= this.sizY; y++) {
       for (let x = 1; x <= this.sizX; x++) {
         const sta = this.sta[y - 1][x - 1];
+        const def = this.def[y - 1][x - 1];
+        const cell = document.querySelector(`table.hit tr:nth-of-type(${y}) td:nth-of-type(${x})`);
         if (sta === true) {
-          document.querySelector(`table.hit tr:nth-of-type(${y}) td:nth-of-type(${x})`).className = 'open';
+          cell.className = 'open';
+          cell.innerHTML = `<i class="fa fa-circle-thin fa-stack-2x"></i>${def}`;
         } else if (sta === false) {
-          document.querySelector(`table.hit tr:nth-of-type(${y}) td:nth-of-type(${x})`).className = 'closed';
+          cell.className = 'closed';
         }
       }
     }

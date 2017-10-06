@@ -2,13 +2,14 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
   <script type="text/javascript" src="page.js"></script>
 <style>
 
 table.hit { border:3px solid #000; border-spacing:0; border-collapse:collapse; display:inline-block; }
-table.hit td { width:2.7rem; height:2.7rem; border:1px solid #000; vertical-align:middle; text-align:center; font-size:150%; }
+table.hit td { position:relative; width:2.7rem; line-height:2.7rem; border:1px solid #000; vertical-align:middle; text-align:center; font-size:150%; }
 table.hit td.closed { background:#000; color:#aaa;  }
-table.hit td.open { background-size:contain; background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEMAAABDCAMAAADwFEhBAAAABGdBTUEAAK/INwWK6QAAABhQTFRFMzMzWVlZwsLCeXl56OjomZmZAAAA////T4y17gAAAAh0Uk5T/////////wDeg71ZAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZtJREFUWMPtmAluxCAMRb+xnd7/xk0gQDZS26VSKxVppNEEHniJ8R98fH/g9zOSMupgTW6GKC3XQSoORsoAEKc6mJAxycjIBNw2FcWAcmMIbzOfTy0bneUrRhoTGiW9M3S1Ir0GMq0W6RuDXg/Rj0JjxvqUDTnFFwjOhqgpMS8TcXrCxuzmEwTHiJD5FaFjdBBCnCGNgQXiYMg6/8pYLRTXCy/de2i/qLNqaNsV1Tx/MUJ1IKpDxc2Q6lbsx6BADayrsBMlwKjLUNwTK80ogcDhu3vseyNuSluIHJXoLYMcGeQc5SCjrESOkQYZmqOLdqLIKF7YPlGXZqc2Rvi6/mcMGDNiO4MxI09nvC8z3tsZ9WNGHdtdEynsOrWur8ZwKCqYfM/1u9PlDZzu7LS4870v6f0HnP0Hrv3HZhw5LWkuPPZj6kqvh37M3p3eJuN0OrUj6LlPJqtPLhMxxr8hdKwb1Kgb9If1yxQdVTrmB83WtR6bdOVAPxa9adGVjQI6aOukWeDCqm/LnrjpbFDy6n3RAwdDof43/rswj0+KX3RjzDuV1wAAAABJRU5ErkJggg==); }
+table.hit td.open .fa { font-size:180%; color:#333; }
 
 .actions { margin-left:1em; display:inline-block; vertical-align:top; }
 .actions ul { margin:0; padding:0; list-style:none; }
